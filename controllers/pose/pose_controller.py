@@ -19,8 +19,9 @@ class PoseController(Controller):
                                     [-self._constants.x_dist / 2, -self._constants.y_dist / 2, -self._constants.height],
                                     [-self._constants.x_dist / 2, self._constants.y_dist / 2, -self._constants.height]])
 
-    def update_controller_params(self, params):
-        self._position, self._orientation = params
+    def update_controller_params(self, position, orientation):
+        self._position = position
+        self._orientation = orientation
 
     def setup_ui_params(self, pybullet_client):
         base_x = pybullet_client.addUserDebugParameter("base_x", -.02, .02, 0.)
@@ -73,8 +74,9 @@ class PoseController(Controller):
         rear_left_coord = foot_rear_left - hip_rear_left_vertex
 
         # leg vectors transformation
-        inv_orientation = -self._orientation
-        inv_position = -self._position
+        inv_orientation = np.negative(self._orientation)
+        inv_position = np.negative(self._position)
+
         t_front_right_coord = kinematics.transform(front_right_coord, inv_orientation, inv_position)
         t_front_left_coord = kinematics.transform(front_left_coord, inv_orientation, inv_position)
         t_rear_right_coord = kinematics.transform(rear_right_coord, inv_orientation, inv_position)
