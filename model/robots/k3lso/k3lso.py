@@ -1,5 +1,5 @@
-from robot_gym.model.robots.k3lso import constants, marks, motor_constants, ctrl_constants
-from robot_gym.model.robots.robot import Robot
+from model.robots.k3lso import constants, marks, motor_constants, ctrl_constants
+from model.robots.robot import Robot
 
 
 class K3lso(Robot):
