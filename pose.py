@@ -16,9 +16,10 @@ class Pose:
         return position, orientation
 
     def update_signal(self, values):
-        self.signal = self.controller.get_action(
-            self.format_values(values[1], values[2], values[3], values[4], values[5], values[6]))
-        
+        hej = self.format_values(values[0], values[1], values[2], values[3], values[4], values[5])
+        self.controller.update_controller_params(hej[0], hej[1])
+        self.signal = self.controller.get_action()
+
     def get_signal(self):
         return self.signal
 
