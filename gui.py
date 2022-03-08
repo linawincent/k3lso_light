@@ -20,7 +20,8 @@ class GUI:
 
 class Application(Frame):              
     def __init__(self, master=None):
-        Frame.__init__(self, master)   
+        Frame.__init__(self, master) 
+        self.orientation = [0, 0, 0]
         self.grid()                       
         self.createWidgets()
 
@@ -53,11 +54,13 @@ class Application(Frame):
         self.printButton.grid(row=1,column=0) 
 
     def xslider_changed(self,event):  
-        print(self.xscale.get())
+        self.orientation[0] = self.xscale.get()
     
     def yslider_changed(self,event):  
-        print(self.xscale.get())
+        self.orientation[1] = self.yscale.get()
 
     def zslider_changed(self,event):  
-        print(self.xscale.get())
+        self.orientation[2] = self.zscale.get()
 
+    def get_orientation(self):
+        return self.orientation    
