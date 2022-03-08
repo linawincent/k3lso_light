@@ -1,6 +1,5 @@
 import numpy as np
 
-from mpc_controller import gait_generator as gait_generator_lib
 
 # -------------------------------------------------
 # MPC Controller
@@ -31,12 +30,12 @@ MAX_TIME_SECONDS = 30.
 DUTY_FACTOR = [0.6] * 4
 INIT_PHASE_FULL_CYCLE = [0.9, 0, 0, 0.9]
 
-INIT_LEG_STATE = (
-    gait_generator_lib.LegState.SWING,
-    gait_generator_lib.LegState.STANCE,
-    gait_generator_lib.LegState.STANCE,
-    gait_generator_lib.LegState.SWING,
-)
+# INIT_LEG_STATE = (
+#     gait_generator_lib.LegState.SWING,
+#     gait_generator_lib.LegState.STANCE,
+#     gait_generator_lib.LegState.STANCE,
+#     gait_generator_lib.LegState.SWING,
+# )
 
 VX_OFFSET = -0.042
 VY_OFFSET = 0.005
