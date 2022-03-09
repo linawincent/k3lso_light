@@ -26,13 +26,19 @@ def action():
 
 
 def convert_pos_ros(command):
+    # From radians to relative radians for Ros-commands and sign-change
+
     offset = np.array([
-        -0.04962033801483967, 0.7540106309498033, -1.2809585946909632,
-        -0.04962033801483945, 0.7540106309498033, 1.2809585946909632,
-        -0.04962033801483967, -0.7540106309498033, -1.2809585946909632,
-        -0.04962033801483945, -0.7540106309498033, 1.2809585946909632
+        -0.03964887,  1.10352184, -1.95548584, -0.03964887,  1.10352184,  1.95548584,
+        -0.03964887, -1.10352184, -1.95548584, -0.03964887, -1.10352184,  1.95548584
         ])
-    return np.array(command) - offset
+
+    transformed_command = np.array(command) - offset
+    ids = [1, 2, 5, 6]
+    for i in ids:
+        transformed_command[i] = -transformed_command[i]
+
+    return transformed_command
 
 
 if __name__ == '__main__':
