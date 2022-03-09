@@ -30,12 +30,13 @@ class Pose:
 
     def runtk(self):  # runs in background thread
         self.app = Application()               
-        self.app.master.title('Sample application')     
+        self.app.master.title('Gui Pose')     
         self.app.mainloop()
 
     def check_gui(self):
         orientation = self.app.get_orientation()
-        return orientation[0], orientation[1], orientation[2]
+        position = self.app.get_position()
+        return position, orientation
 
 
 
