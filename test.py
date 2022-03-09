@@ -39,6 +39,10 @@ if __name__ == '__main__':
     k3lso = K3lso(None)
     controller = PoseController(k3lso, 0)
     action = action()
+    print('Action:')
     print(np.array(action))
+    print('Radians:')
     print(convert_pos_ros(action))
+    print('no. of rotations:')
+    print(convert_pos_ros(action)/(2 * 3.1415))
 
