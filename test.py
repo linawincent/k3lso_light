@@ -5,32 +5,33 @@ import numpy as np
 
 def check_gui():
     position, orientation = np.zeros(3), np.zeros(3)
-    position[0] = input('x: \n')
-    position[1] = input('y:\n')
     position[2] = input('z:\n')
-    orientation[0] = input('roll: \n')
-    orientation[1] = input('pitch:\n')
-    orientation[2] = input('yaw:\n')
+
+    """check = input('Input values y?:\n')
+    if check == 'y':
+        position[0] = input('x: \n')
+        position[1] = input('y:\n')
+        position[2] = input('z:\n')
+        orientation[0] = input('roll: \n')
+        orientation[1] = input('pitch:\n')
+        orientation[2] = input('yaw:\n')"""
+
     return position, orientation
 
 
-def action():
-    check = input('Input values y?:\n')
-    if check == 'y':
-        position, orientation = check_gui()
-    else:
-        position = [0., 0., 0.]
-        orientation = [0., 0., 0.]
+def get_action(position, orientation):
+    # position, orientation = check_gui()
     controller.update_controller_params(position, orientation)
     return controller.get_action()
 
 
 def convert_pos_ros(command):
     # From radians to relative radians for Ros-commands and sign-change
-
     offset = np.array([
-        -0.03964887,  1.10352184, -1.95548584, -0.03964887,  1.10352184,  1.95548584,
-        -0.03964887, -1.10352184, -1.95548584, -0.03964887, -1.10352184,  1.95548584
+        -0.03964886725138972, 1.1035218357931036, -1.9554858419361683,
+        -0.03964886725138994, 1.1035218357931036, 1.9554858419361683,
+        -0.03964886725138972, -1.1035218357931036, -1.9554858419361683,
+        -0.03964886725138994, -1.1035218357931036, 1.9554858419361683
         ])
 
     transformed_command = np.array(command) - offset
@@ -41,14 +42,27 @@ def convert_pos_ros(command):
     return transformed_command
 
 
+def print_output(pybullet_action, ros_action):
+    # print('Action:')
+    # print(np.array(pybullet_action))
+    # print('Radians:')
+    # print(ros_action)
+    # print('no. of rotations:')
+    # print(ros_action / (2 * 3.1415))
+    # print('command:')
+    print('ros2 service call / k3lso_moteus / motors_test k3lso_msgs / srv / MotorsTest '
+          '"{ids: [1,2,3,4,5,6,7,8,9,10,11,12], position:', np.around(ros_action, 5).tolist(), '}"')
+
+
 if __name__ == '__main__':
     k3lso = K3lso(None)
     controller = PoseController(k3lso, 0)
-    action = action()
-    print('Action:')
-    print(np.array(action))
-    print('Radians:')
-    print(convert_pos_ros(action))
-    print('no. of rotations:')
-    print(convert_pos_ros(action)/(2 * 3.1415))
 
+    wanted_position, wanted_orientation = check_gui()
+    steps = int(input('Number of steps:\n'))
+    step_position, step_orientation = np.zeros(3), np.zeros(3)
+
+    for i in range(steps + 1):
+        action = get_action(step_position, step_orientation)
+        print_output(action, convert_pos_ros(action))
+        step_position += wanted_position / steps

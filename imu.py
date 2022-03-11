@@ -16,10 +16,10 @@ class IMU:
         return [self]
 
     def add_pos(self, lin_acc, ang_vel, time):
-        a = np.power(time, 2) / 2
+        t = np.power(time, 2) / 2
         g = 10.1  # gravitational offset for the acceleration in z-direction
-        self.pos += np.multiply(lin_acc, a)
+        self.pos += np.multiply(lin_acc, t)
         self.x += lin_acc[0] / 2 * time**2
         self.y += lin_acc[1] / 2 * time ** 2
-        self.z += (lin_acc[2] / 2 * time ** 2) - g
+        self.z += ((lin_acc[2] - g) / 2 * time ** 2)
 
