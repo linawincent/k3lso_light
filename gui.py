@@ -25,7 +25,7 @@ class Application(Frame):
         self.yscalelabel.grid(row=5, column=1)
 
         # z slider
-        self.zscale = Scale(self, from_=-0.02, to=0.02, orient='horizontal',command=self.zslider_changed)
+        self.zscale = Scale(self, from_=-0.04, to=0.04, orient='horizontal',command=self.zslider_changed)
         self.zscale.grid(row=6, column=1 , columnspan=3)
         self.zscalelabel = Label(self, text='z_pos: ' + '{:,f}'.format(self.position[2]))
         self.zscalelabel.grid(row=7,column=1)

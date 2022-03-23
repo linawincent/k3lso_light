@@ -34,9 +34,9 @@ class Pose:
         ])
 
         transformed_command = (np.array(command) - offset_motor) / (2 * 3.14159265)
-        ids = [1, 2, 5, 6]
+        ids = [2, 3, 6, 7, 8]
         for j in ids:
-            transformed_command[j] = -transformed_command[j]
+            transformed_command[j-1] = -transformed_command[j-1]
 
         return transformed_command.tolist()
 

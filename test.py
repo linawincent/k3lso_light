@@ -1,5 +1,6 @@
 from model.robots.k3lso.k3lso import K3lso
 from controllers.pose.pose_controller import PoseController
+import pose
 import numpy as np
 
 
@@ -25,9 +26,8 @@ def get_action(position, orientation):
     return controller.get_action()
 
 
-def convert_pos_ros(command):
+"""def convert_pos_ros(command):
     # From radians to relative radians for Ros-commands and sign-change
-
     # Since k3lso calculates 0 from defined position
     offset_motor = np.array([
         -0.03964886725138972, 1.1035218357931036, -1.9554858419361683,
@@ -41,18 +41,18 @@ def convert_pos_ros(command):
         -0.05, 0, 0, 0, 0.09, -0.05
     ])
 
-    """# Better zero-position for k3lso
+    # Better zero-position for k3lso
     offset_orig = np.array([
         0.017, - 1.030, 1.480, 0.001, - 1.040, 1.430,
         0.007, - 1.090, 1.460, 0.050, - 1.190, 1.440
     ])
-"""
+
     transformed_command = (np.array(command) - offset_motor) / (2 * 3.14159265) + offset_orig
     ids = [1, 2, 5, 6, 8]
     for j in ids:
         transformed_command[j] = -transformed_command[j]
 
-    return transformed_command
+    return transformed_command"""
 
 
 def print_output(pybullet_action, ros_action):
@@ -70,6 +70,7 @@ def print_output(pybullet_action, ros_action):
 if __name__ == '__main__':
     k3lso = K3lso(None)
     controller = PoseController(k3lso, 0)
+    pose = pose.Pose()
 
     wanted_position, wanted_orientation = check_gui()
     steps = int(input('Number of steps:\n'))
@@ -77,5 +78,5 @@ if __name__ == '__main__':
 
     for i in range(steps + 1):
         action = get_action(step_position, step_orientation)
-        print_output(action, convert_pos_ros(action))
+        print_output(action, pose.convert_pos_ros(pose, action))
         step_position += wanted_position / steps
