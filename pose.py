@@ -1,4 +1,5 @@
 import threading
+import numpy as np
 from controllers.pose.pose_controller import PoseController
 from model.robots.k3lso.k3lso import K3lso
 from gui import Application
@@ -16,17 +17,35 @@ class Pose:
         thd.daemon = True  # background thread will exit if main thread exits
         thd.start()  # start tk loop
 
-    def format_values(self, xpos, ypos, zpos, roll, pitch, yaw):
-        position = [xpos, ypos, zpos]
-        orientation = [roll, pitch, yaw]
-        return position, orientation
+    def convert_pos_ros(self, command):
+        # From radians to relative radians for Ros-commands and sign-change
+
+        # Since k3lso calculates 0 from defined position
+        offset_motor = np.array([
+            -0.03964886725138972, 1.1035218357931036, -1.9554858419361683,
+            -0.03964886725138994, 1.1035218357931036, 1.9554858419361683,
+            -0.03964886725138972, -1.1035218357931036, -1.9554858419361683,
+            -0.03964886725138994, -1.1035218357931036, 1.9554858419361683
+            ])
+        # Better zero-position for k3lso
+        offset_orig = np.array([
+            0.017, - 1.030, 1.480, 0.001, - 1.040, 1.430,
+            0.007, - 1.090, 1.460, 0.050, - 1.190, 1.440
+        ])
+
+        transformed_command = np.array(command) - offset_motor
+        ids = [1, 2, 5, 6]
+        for j in ids:
+            transformed_command[j] = -transformed_command[j]
+
+        return transformed_command
 
     def update_signal(self, position, orientation):
         self.controller.update_controller_params(position, orientation)
         self.signal = self.controller.get_action()
 
     def get_signal(self):
-        return self.signal
+        return self.convert_pos_ros(self.signal)
 
     def runtk(self):  # runs in background thread
         self.app = Application()
