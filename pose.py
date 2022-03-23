@@ -38,6 +38,7 @@ class Pose:
         for j in ids:
             transformed_command[j-1] = -transformed_command[j-1]
 
+        transformed_command += offset_orig
         return transformed_command.tolist()
 
     def update_signal(self, position, orientation):
