@@ -38,7 +38,7 @@ class Pose:
         for j in ids:
             transformed_command[j] = -transformed_command[j]
 
-        return transformed_command
+        return transformed_command.tolist()
 
     def update_signal(self, position, orientation):
         self.controller.update_controller_params(position, orientation)
