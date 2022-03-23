@@ -26,15 +26,15 @@ class Pose:
             -0.03964886725138994, 1.1035218357931036, 1.9554858419361683,
             -0.03964886725138972, -1.1035218357931036, -1.9554858419361683,
             -0.03964886725138994, -1.1035218357931036, 1.9554858419361683
-            ])
+        ])
         # Better zero-position for k3lso
         offset_orig = np.array([
-            0.017, - 1.030, 1.480, 0.001, - 1.040, 1.430,
-            0.007, - 1.090, 1.460, 0.050, - 1.190, 1.440
+            0, 0.1, -0.1, 0, -0.1, 0.1,
+            -0.05, 0, 0, 0, 0.09, -0.05
         ])
 
-        transformed_command = np.array(command) - offset_motor
-        ids = [1, 2, 5, 6]
+        transformed_command = (np.array(command) - offset_motor) / (2 * 3.14159265) + offset_orig
+        ids = [1, 2, 5, 6, 8]
         for j in ids:
             transformed_command[j] = -transformed_command[j]
 

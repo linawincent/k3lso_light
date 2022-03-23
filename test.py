@@ -47,8 +47,8 @@ def convert_pos_ros(command):
         0.007, - 1.090, 1.460, 0.050, - 1.190, 1.440
     ])
 """
-    transformed_command = np.array(command) - offset_motor + offset_orig
-    ids = [1, 2, 5, 6]
+    transformed_command = (np.array(command) - offset_motor) / (2 * 3.14159265) + offset_orig
+    ids = [1, 2, 5, 6, 8]
     for j in ids:
         transformed_command[j] = -transformed_command[j]
 
