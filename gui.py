@@ -7,9 +7,7 @@ class Application(Frame):
         Frame.__init__(self, master) 
         self.position = [0, 0, 0]
         self.orienation = [0, 0, 0]
-        self.grid()
-        self.stepbuttonlist = []   
-        self.scalelist = []                   
+        self.grid()                   
         self.createWidgets()
 
     def createWidgets(self):
@@ -95,21 +93,37 @@ class Application(Frame):
         self.grid_rowconfigure(13, minsize=10)
         self.grid_rowconfigure(16, minsize=10)
 
-        self.scalelist.append(self.xscale)
-        self.scalelist.append(self.yscale)
-        self.scalelist.append(self.zscale)
-        self.scalelist.append(self.rollscale)
-        self.scalelist.append(self.pitchscale)
-        self.scalelist.append(self.yawscale)
+        # Create buttons for step increasing and decreasing values of scales
 
-        for i in range(6):
-            slider = self.scalelist.pop(0)
-            posstepbutton = Button(self, text='+',command=lambda: self.stepslider(slider,'+'))
-            posstepbutton.grid(row=3*(i+1), column=6)
-            negstepbutton = Button(self, text='-',command=lambda: self.stepslider(slider,'-'))
-            negstepbutton.grid(row=3*(i+1), column=0)
-            self.stepbuttonlist.append(posstepbutton)
-            self.stepbuttonlist.append(negstepbutton)
+        stepbuttonposx = Button(self, text='+',command=lambda: self.stepxslider('+'))
+        stepbuttonposx.grid(row=3, column=6)
+        stepbuttonnegx = Button(self, text='-',command=lambda: self.stepxslider('-'))
+        stepbuttonnegx.grid(row=3, column=0)
+
+        stepbuttonposy = Button(self, text='+',command=lambda: self.stepyslider('+'))
+        stepbuttonposy.grid(row=6, column=6)
+        stepbuttonnegy = Button(self, text='-',command=lambda: self.stepyslider('-'))
+        stepbuttonnegy.grid(row=6, column=0)
+
+        stepbuttonposz = Button(self, text='+',command=lambda: self.stepzslider('+'))
+        stepbuttonposz.grid(row=9, column=6)
+        stepbuttonnegz = Button(self, text='-',command=lambda: self.stepzslider('-'))
+        stepbuttonnegz.grid(row=9, column=0)
+
+        stepbuttonposroll = Button(self, text='+',command=lambda: self.steprollslider('+'))
+        stepbuttonposroll.grid(row=12, column=6)
+        stepbuttonnegroll = Button(self, text='-',command=lambda: self.steprollslider('-'))
+        stepbuttonnegroll.grid(row=12, column=0)
+
+        stepbuttonpospitch = Button(self, text='+',command=lambda: self.steppitchslider('+'))
+        stepbuttonpospitch.grid(row=15, column=6)
+        stepbuttonnegpitch = Button(self, text='-',command=lambda: self.steppitchslider('-'))
+        stepbuttonnegpitch.grid(row=15, column=0)
+
+        stepbuttonposyaw = Button(self, text='+',command=lambda: self.stepyawslider('+'))
+        stepbuttonposyaw.grid(row=18, column=6)
+        stepbuttonnegyaw = Button(self, text='-',command=lambda: self.stepyawslider('-'))
+        stepbuttonnegyaw.grid(row=18, column=0)
 
     def xslider_changed(self, event):  
         self.position[0] = self.xscale.get()
@@ -135,12 +149,47 @@ class Application(Frame):
         self.orienation[2] = self.yawscale.get()
         self.yawscalelabel.configure(text = 'yaw:  ' + '{:,f}'.format(self.orienation[2]))
     
-    def stepslider(self, scale, msg):
+    def stepxslider(self, msg):
         if msg == '+':
-            scale.set(scale.get() + 0.01)
+            self.xscale.set(self.xscale.get() + 0.001)
 
         if msg == '-':
-            scale.set(scale.get() - 0.01)
+            self.xscale.set(self.xscale.get() - 0.001)
+
+    def stepyslider(self, msg):
+        if msg == '+':
+            self.yscale.set(self.yscale.get() + 0.001)
+
+        if msg == '-':
+            self.yscale.set(self.yscale.get() - 0.001)
+
+    def stepzslider(self, msg):
+        if msg == '+':
+            self.zscale.set(self.zscale.get() + 0.001)
+
+        if msg == '-':
+            self.zscale.set(self.zscale.get() - 0.001)
+
+    def steprollslider(self, msg):
+        if msg == '+':
+            self.rollscale.set(self.rollscale.get() + 0.01)
+
+        if msg == '-':
+            self.rollscale.set(self.rollscale.get() - 0.01)
+
+    def steppitchslider(self, msg):
+        if msg == '+':
+            self.pitchscale.set(self.pitchscale.get() + 0.01)
+
+        if msg == '-':
+            self.pitchscale.set(self.pitchscale.get() - 0.01)
+
+    def stepyawslider(self, msg):
+        if msg == '+':
+            self.yawscale.set(self.yawscale.get() + 0.01)
+
+        if msg == '-':
+            self.yawscale.set(self.yawscale.get() - 0.01)
 
     def senddata(self):
 
