@@ -13,25 +13,28 @@ class Application(Frame):
     def createWidgets(self):
 
         # x slider
-        self.xscalelabel = Label(self, text='x_pos:  ' + '{:,f}'.format(self.position[0]))
+        self.xscalelabel = Label(self, text='xpos:  ' + '{:,f}'.format(self.position[0]))
         self.xscalelabel.grid(row=2, column=1)
-        self.xscale = Scale(self, from_=-0.02, to=0.02, orient='horizontal',command=self.xslider_changed, length=200)
+        self.xscale = Scale(self, from_=-0.02, to=0.02, orient='horizontal', command=self.update_all_sliders, length=200)
+        self.xscale.bind("<ButtonRelease-1>", self.xslider_changed, add='+')
         self.xscale.grid(row=3, column=1, columnspan=3)
         self.xsep = Separator(self, orient='horizontal')
         self.xsep.grid(row=4, columnspan=7, sticky='ew')
         
         # y slider
-        self.yscalelabel = Label(self, text='y_pos:  ' + '{:,f}'.format(self.position[1]))
+        self.yscalelabel = Label(self, text='ypos:  ' + '{:,f}'.format(self.position[1]))
         self.yscalelabel.grid(row=5, column=1)
-        self.yscale = Scale(self, from_=-0.02, to=0.02, orient='horizontal',command=self.yslider_changed, length=200)
+        self.yscale = Scale(self, from_=-0.02, to=0.02, orient='horizontal', command=self.update_all_sliders, length=200)
+        self.yscale.bind("<ButtonRelease-1>", self.yslider_changed, add='+')
         self.yscale.grid(row=6, column=1, columnspan=3)
         self.ysep = Separator(self, orient='horizontal')
         self.ysep.grid(row=7, columnspan=7, sticky='ew')
 
         # z slider
-        self.zscalelabel = Label(self, text='z_pos:  ' + '{:,f}'.format(self.position[2]))
+        self.zscalelabel = Label(self, text='zpos:  ' + '{:,f}'.format(self.position[2]))
         self.zscalelabel.grid(row=8,column=1)
-        self.zscale = Scale(self, from_=-0.04, to=0.04, orient='horizontal',command=self.zslider_changed, length=200)
+        self.zscale = Scale(self, from_=-0.04, to=0.04, orient='horizontal', command=self.update_all_sliders, length=200)
+        self.zscale.bind("<ButtonRelease-1>", self.zslider_changed, add='+')
         self.zscale.grid(row=9, column=1 , columnspan=3)
         self.zsep = Separator(self, orient='horizontal')
         self.zsep.grid(row=10, columnspan=7, sticky='ew')
@@ -39,7 +42,8 @@ class Application(Frame):
         # roll slider
         self.rollscalelabel = Label(self, text = 'roll:  ' + '{:,f}'.format(self.orienation[0]))
         self.rollscalelabel.grid(row = 11, column = 1)
-        self.rollscale = Scale(self, from_=-np.pi / 4, to=np.pi / 4, orient='horizontal', command=self.rollsilder_changed, length=200)
+        self.rollscale = Scale(self, from_=-np.pi / 4, to=np.pi / 4, orient='horizontal', command=self.update_all_sliders, length=200)
+        self.rollscale.bind("<ButtonRelease-1>", self.rollslider_changed, add='+')
         self.rollscale.grid(row = 12, column = 1, columnspan = 3)
         self.rollsep = Separator(self, orient='horizontal')
         self.rollsep.grid(row=13, columnspan=7, sticky='ew')
@@ -47,7 +51,8 @@ class Application(Frame):
         # pitch slider
         self.pitchscalelabel = Label(self, text='pitch:  ' + '{:,f}'.format(self.orienation[1]))
         self.pitchscalelabel.grid(row=14, column=1)
-        self.pitchscale = Scale(self, from_=-np.pi / 4, to=np.pi / 4, orient='horizontal', command=self.pitchslider_changed, length=200)
+        self.pitchscale = Scale(self, from_=-np.pi / 4, to=np.pi / 4, orient='horizontal', command=self.update_all_sliders, length=200)
+        self.pitchscale.bind("<ButtonRelease-1>", self.pitchslider_changed, add='+')
         self.pitchscale.grid(row=15, column=1, columnspan=3)
         self.pitchsep = Separator(self, orient='horizontal')
         self.pitchsep.grid(row=16, columnspan=7, sticky='ew')
@@ -55,7 +60,8 @@ class Application(Frame):
         # yaw slider
         self.yawscalelabel = Label(self, text='yaw:  ' + '{:,f}'.format(self.orienation[2]))
         self.yawscalelabel.grid(row=17, column=1)
-        self.yawscale = Scale(self, from_=-np.pi / 4, to=np.pi / 4, orient='horizontal', command=self.yawslider_changed, length=200)
+        self.yawscale = Scale(self, from_=-np.pi / 4, to=np.pi / 4, orient='horizontal', command=self.update_all_sliders, length=200)
+        self.yawscale.bind("<ButtonRelease-1>", self.yawslider_changed, add='+')
         self.yawscale.grid(row=18, column=1, columnspan=3)
         self.yawsep = Separator(self, orient='horizontal')
         self.yawsep.grid(row=19, columnspan=7, sticky='ew')
@@ -125,6 +131,14 @@ class Application(Frame):
         stepbuttonnegyaw = Button(self, text='-',command=lambda: self.stepyawslider('-'))
         stepbuttonnegyaw.grid(row=18, column=0)
 
+    def update_all_sliders(self, event):
+        self.xscalelabel.configure(text = 'xpos:  ' + '{:,f}'.format(self.xscale.get()))
+        self.yscalelabel.configure(text = 'ypos:  ' + '{:,f}'.format(self.yscale.get()))
+        self.zscalelabel.configure(text = 'zpos:  ' + '{:,f}'.format(self.zscale.get()))
+        self.rollscalelabel.configure(text = 'roll:  ' + '{:,f}'.format(self.rollscale.get()))
+        self.pitchscalelabel.configure(text = 'pitch:  ' + '{:,f}'.format(self.pitchscale.get()))
+        self.yawscalelabel.configure(text = 'yaw:  ' + '{:,f}'.format(self.yawscale.get()))
+    
     def xslider_changed(self, event):  
         self.position[0] = self.xscale.get()
         self.xscalelabel.configure(text = 'xpos:  ' + '{:,f}'.format(self.position[0]))
@@ -133,11 +147,14 @@ class Application(Frame):
         self.position[1] = self.yscale.get()
         self.yscalelabel.configure(text = 'ypos:  ' + '{:,f}'.format(self.position[1]))
 
+    def yslider_normal(self, event):
+        self.yscalelabel.configure(text = 'xpos:  ' + '{:,f}'.format(self.yscale.get()))
+
     def zslider_changed(self, event):  
         self.position[2] = self.zscale.get()
         self.zscalelabel.configure(text = 'zpos:  ' + '{:,f}'.format(self.position[2]))
 
-    def rollsilder_changed(self, event):
+    def rollslider_changed(self, event):
         self.orienation[0] = self.rollscale.get()
         self.rollscalelabel.configure(text = 'roll:  ' + '{:,f}'.format(self.orienation[0]))
 
