@@ -1,32 +1,34 @@
 from model.robots.k3lso.k3lso import K3lso
-from controllers.pose.pose_controller import PoseController
-import pose
+# from controllers.pose.pose_controller import PoseController
+# import pose
+from controllers.mpc.mpc_controller import MPCController
+import mpc
 import numpy as np
 
 
-def check_gui():
+def position_check_gui():
     position, orientation = np.zeros(3), np.zeros(3)
     position[2] = input('z:\n')
-
-    """check = input('Input values y?:\n')
-    if check == 'y':
-        position[0] = input('x: \n')
-        position[1] = input('y:\n')
-        position[2] = input('z:\n')
-        orientation[0] = input('roll: \n')
-        orientation[1] = input('pitch:\n')
-        orientation[2] = input('yaw:\n')"""
-
     return position, orientation
 
 
-def get_action(position, orientation):
-    # position, orientation = check_gui()
+def velocity_check_gui():
+    velocity = np.zeros(3)
+    velocity[0] = input('vx:\n')
+    return velocity
+
+
+"""def get_action(position, orientation):
     controller.update_controller_params(position, orientation)
+    return controller.get_action()"""
+
+
+def get_action(velocity):
+    controller.update_controller_params(velocity)
     return controller.get_action()
 
 
-"""def convert_pos_ros(command):
+def convert_pos_ros(command):
     # From radians to relative radians for Ros-commands and sign-change
     # Since k3lso calculates 0 from defined position
     offset_motor = np.array([
@@ -52,31 +54,31 @@ def get_action(position, orientation):
     for j in ids:
         transformed_command[j] = -transformed_command[j]
 
-    return transformed_command"""
+    return transformed_command
 
 
 def print_output(pybullet_action, ros_action):
-    # print('Action:')
-    # print(np.array(pybullet_action))
-    # print('Radians:')
-    # print(ros_action)
-    # print('no. of rotations:')
-    # print(ros_action / (2 * 3.1415))
-    # print('command:')
     print('ros2 service call /k3lso_moteus/motors_test k3lso_msgs/srv/MotorsTest '
           '"{ids: [1,2,3,4,5,6,7,8,9,10,11,12], position:', np.around(ros_action, 5).tolist(), '}"')
 
 
 if __name__ == '__main__':
-    k3lso = K3lso(None)
-    controller = PoseController(k3lso, 0)
-    pose = pose.Pose()
+    k3lso = K3lso(1, None, 0)
+    controller = MPCController(k3lso, 0)
+    # pose = pose.Pose()
+    mpc = mpc.MPC()
 
-    wanted_position, wanted_orientation = check_gui()
-    steps = int(input('Number of steps:\n'))
+    # wanted_position, wanted_orientation = position_check_gui()
+    """steps = int(input('Number of steps:\n'))
     step_position, step_orientation = np.zeros(3), np.zeros(3)
 
     for i in range(steps + 1):
         action = get_action(step_position, step_orientation)
         print_output(action, pose.convert_pos_ros(pose, action))
         step_position += wanted_position / steps
+"""
+
+    wanted_velocity = velocity_check_gui()
+    action = get_action(wanted_velocity)
+    print(action)
+
