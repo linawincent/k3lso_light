@@ -3,6 +3,8 @@ import numpy as np
 
 NUM_MOTORS = 12
 
+MOTOR_CONTROL_CLASS = 1
+
 MOTOR_ENABLED = [True] * NUM_MOTORS
 
 MOTOR_OFFSET = np.array([0.] * NUM_MOTORS)

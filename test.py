@@ -63,7 +63,7 @@ def print_output(pybullet_action, ros_action):
 
 
 if __name__ == '__main__':
-    k3lso = K3lso(1, None, 0)
+    k3lso = K3lso('1', None, 0)
     controller = MPCController(k3lso, 0)
     # pose = pose.Pose()
     mpc = mpc.MPC()

@@ -26,15 +26,16 @@ class Robot:
         self._motor_offset = self.GetMotorConstants().MOTOR_OFFSET
         self._motor_direction = self.GetMotorConstants().MOTOR_DIRECTION
         # load robot urdf
-        self._quadruped = self._load_urdf()
+        # self._quadruped = self._load_urdf()
         # build joints dict
-        self._BuildJointNameToIdDict()
-        self._BuildUrdfIds()
-        self._BuildMotorIdList()
+        # self._BuildJointNameToIdDict()
+        # self._BuildUrdfIds()
+        # self._BuildMotorIdList()
         # set robot init pose
-        self.ResetPose()
+        # self.ResetPose()
         # fetch joints' states
-        self.ReceiveObservation()
+        #TODO: observation from
+        # self.ReceiveObservation()
         # build locomotion motor model
         self._motor_model = self.GetMotorClass()(
             kp=self.GetMotorConstants().MOTOR_POSITION_GAINS,
