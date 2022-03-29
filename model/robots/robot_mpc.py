@@ -278,53 +278,7 @@ class Robot:
         observation.extend(self.GetTrueBaseRollPitchYawRate())
         return observation
 
-    def ApplyAction(self, motor_commands, motor_control_mode):
-        """Apply the motor commands using the motor model.
-        Args:
-          motor_commands: np.array. Can be motor angles, torques, hybrid commands
-          motor_control_mode: A MotorControlMode enum.
-        """
-        motor_commands = np.asarray(motor_commands)
-        q, qdot = self.GetPDObservation()
-        qdot_true = self.GetTrueMotorVelocities()
-        actual_torque, observed_torque = self._motor_model.convert_to_torque(
-            motor_commands, q, qdot, qdot_true, motor_control_mode)
-
-        # The torque is already in the observation space because we use
-        # GetMotorAngles and GetMotorVelocities.
-        self._observed_motor_torques = observed_torque
-
-        # Transform into the motor space when applying the torque.
-        self._applied_motor_torque = np.multiply(actual_torque,
-                                                 self._motor_direction)
-        motor_ids = []
-        motor_torques = []
-
-        for motor_id, motor_torque, motor_enabled in zip(self._motor_id_list,
-                                                         self._applied_motor_torque,
-                                                         self._motor_enabled_list):
-            if motor_enabled:
-                motor_ids.append(motor_id)
-                motor_torques.append(motor_torque)
-            else:
-                motor_ids.append(motor_id)
-                motor_torques.append(0)
-        self._SetMotorTorqueByIds(motor_ids, motor_torques)
-
-    def _SetMotorTorqueByIds(self, motor_ids, torques):
-        self._pybullet_client.setJointMotorControlArray(
-            bodyIndex=self._quadruped,
-            jointIndices=motor_ids,
-            controlMode=self._pybullet_client.TORQUE_CONTROL,
-            forces=torques)
-
-    def _BuildJointNameToIdDict(self):
-        num_joints = self._pybullet_client.getNumJoints(self._quadruped)
-        self._joint_name_to_id = {}
-        for i in range(num_joints):
-            joint_info = self._pybullet_client.getJointInfo(self._quadruped, i)
-            self._joint_name_to_id[joint_info[1].decode("UTF-8")] = joint_info[0]
-
+   
     def _BuildUrdfIds(self):
         """Build the link Ids from its name in the URDF file.
         Raises:
