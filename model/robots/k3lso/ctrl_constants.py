@@ -45,16 +45,16 @@ WZ_OFFSET = -0.
 # Pose Controller
 # -------------------------------------------------
 
-l = 0.246
+"""l = 0.246
 w = 0.055
 hip = 0.105
 leg = 0.20652
 foot = 0.245
 y_dist = 0.285
 x_dist = l
-height = 0.25
+height = 0.25"""
 
-""" Updated constants
+""" Updated constants"""
 l = 0.6
 w = 0.256
 hip = 0.049
@@ -62,7 +62,7 @@ leg = 0.34
 foot = 0.34
 y_dist = 0.285
 x_dist = l
-height = 0.45"""
+height = 0.45
 
 # frame vectors
 hip_front_right_v = np.array([l / 2, -w / 2, 0])

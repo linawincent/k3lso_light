@@ -1,6 +1,6 @@
 from model.robots.k3lso.k3lso import K3lso
-# from controllers.pose.pose_controller import PoseController
-# import pose
+from controllers.pose.pose_controller import PoseController
+import pose
 from controllers.mpc.mpc_controller import MPCController
 import mpc
 import numpy as np
@@ -18,24 +18,22 @@ def velocity_check_gui():
     return velocity
 
 
-"""def get_action(position, orientation):
+def get_action(position, orientation):
     controller.update_controller_params(position, orientation)
-    return controller.get_action()"""
-
-
-def get_action(velocity):
-    controller.update_controller_params(velocity)
     return controller.get_action()
 
 
-def convert_pos_ros(command):
+"""def get_action(velocity):
+    controller.update_controller_params(velocity)
+    return controller.get_action()"""
+
+
+"""def convert_pos_ros(command):
     # From radians to relative radians for Ros-commands and sign-change
     # Since k3lso calculates 0 from defined position
     offset_motor = np.array([
-        -0.03964886725138972, 1.1035218357931036, -1.9554858419361683,
-        -0.03964886725138994, 1.1035218357931036, 1.9554858419361683,
-        -0.03964886725138972, -1.1035218357931036, -1.9554858419361683,
-        -0.03964886725138994, -1.1035218357931036, 1.9554858419361683
+        0.07683732,  0.8524038, - 1.7048076,   0.07683732,  0.8524038,   1.7048076,
+        0.07683732, - 0.8524038, - 1.7048076,   0.07683732, - 0.8524038,  1.7048076
         ])
     # Better zero-position for k3lso
     offset_orig = np.array([
@@ -49,12 +47,12 @@ def convert_pos_ros(command):
         0.007, - 1.090, 1.460, 0.050, - 1.190, 1.440
     ])
 
-    transformed_command = (np.array(command) - offset_motor) / (2 * 3.14159265) + offset_orig
+    transformed_command = (np.array(command) - offset_motor) / (2 * 3.14159265) # + offset_orig
     ids = [1, 2, 5, 6, 8]
     for j in ids:
         transformed_command[j] = -transformed_command[j]
 
-    return transformed_command
+    return transformed_command"""
 
 
 def print_output(pybullet_action, ros_action):
@@ -63,10 +61,17 @@ def print_output(pybullet_action, ros_action):
 
 
 if __name__ == '__main__':
-    k3lso = K3lso('1', None)
+    """k3lso = K3lso('1', None)
     controller = MPCController(k3lso, 0)
     # pose = pose.Pose()
-    mpc = mpc.MPC()
+    mpc = mpc.MPC()"""
+
+    k3lso = K3lso(None)
+    controller = PoseController(k3lso, 0)
+    pose = pose.Pose()
+    action = get_action(np.zeros(3), np.zeros(3))
+    print(action)
+    print(pose.convert_pos_ros(action))
 
     # wanted_position, wanted_orientation = position_check_gui()
     """steps = int(input('Number of steps:\n'))
@@ -78,7 +83,7 @@ if __name__ == '__main__':
         step_position += wanted_position / steps
 """
 
-    wanted_velocity = velocity_check_gui()
+    """wanted_velocity = velocity_check_gui()
     action = get_action(wanted_velocity)
-    print(action)
+    print(action)"""
 
