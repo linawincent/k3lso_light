@@ -33,8 +33,8 @@ class Pose:
 
         # Better zero-position for k3lso
         offset_orig = np.array([
-            0, 0.1, -0.1, 0, -0.1, 0.1,
-            -0.05, 0, 0, 0, 0.09, -0.05
+            0, 0.1, -0.1, 0.1, -0.1, 0.1,
+            -0.1, 0, 0, 0, 0.15, -0.07
         ])
 
         transformed_command = (np.array(command) - offset_motor ) / (2 * 3.14159265)
