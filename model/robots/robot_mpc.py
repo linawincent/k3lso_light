@@ -34,17 +34,17 @@ class Robot:
         # set robot init pose
         # self.ResetPose()
         # fetch joints' states
-        #TODO: observation from
         # self.ReceiveObservation()
+
         # build locomotion motor model
-        self._motor_model = self.GetMotorClass()(
+        """self._motor_model = self.GetMotorClass()(
             kp=self.GetMotorConstants().MOTOR_POSITION_GAINS,
             kd=self.GetMotorConstants().MOTOR_VELOCITY_GAINS,
             motor_control_mode=motor_control_mode,
             num_motors=self._num_motors
-        )
+        )"""
         # robot equipment
-        self._load_equipment()
+        # self._load_equipment()
 
     @property
     def num_legs(self):
@@ -54,9 +54,9 @@ class Robot:
     def num_motors(self):
         return self._num_motors
 
-    @property
+    """@property
     def pybullet_client(self):
-        return self._pybullet_client
+        return self._pybullet_client"""
 
     @property
     def equipment(self):
@@ -203,6 +203,7 @@ class Robot:
         return np.asarray(relative_velocity)
 
     def GetBaseRollPitchYawRate(self):
+        # TODO: IMU implementation
         """Get the rate of orientation change of the minitaur's base in euler angle.
         Returns:
           rate of (roll, pitch, yaw) change of the minitaur's base.
@@ -229,6 +230,7 @@ class Robot:
         return contacts
 
     def GetMotorAngles(self):
+        # TODO: from ROS node
         motor_angles = [state[0] for state in self._joint_states]
         motor_angles = np.multiply(
             np.asarray(motor_angles) - np.asarray(self._motor_offset),
@@ -236,6 +238,7 @@ class Robot:
         return motor_angles
 
     def GetTrueMotorAngles(self):
+        # TODO: from ROS node, same as previous?
         """Gets the twelve motor angles at the current moment, mapped to [-pi, pi].
         Returns:
           Motor angles, mapped to [-pi, pi].
@@ -245,6 +248,7 @@ class Robot:
         return self.GetMotorAngles()
 
     def GetPDObservation(self):
+        # TODO: Velocities from ROS?
         self.ReceiveObservation()
         observation = []
         observation.extend(self.GetTrueMotorAngles())

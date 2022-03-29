@@ -1,6 +1,7 @@
-from model.robots.k3lso.k3lso import K3lso
+"""from model.robots.k3lso.k3lso import K3lso
 from controllers.pose.pose_controller import PoseController
-import pose
+import pose"""
+from model.robots.k3lso.k3lso_mpc import K3lso
 from controllers.mpc.mpc_controller import MPCController
 import mpc
 import numpy as np
@@ -18,14 +19,14 @@ def velocity_check_gui():
     return velocity
 
 
-def get_action(position, orientation):
+def get_action_pos(position, orientation):
     controller.update_controller_params(position, orientation)
     return controller.get_action()
 
 
-"""def get_action(velocity):
+def get_action_vel(velocity):
     controller.update_controller_params(velocity)
-    return controller.get_action()"""
+    return controller.get_action()
 
 
 """def convert_pos_ros(command):
@@ -61,29 +62,19 @@ def print_output(pybullet_action, ros_action):
 
 
 if __name__ == '__main__':
-    """k3lso = K3lso('1', None)
+    k3lso = K3lso('1', None)
     controller = MPCController(k3lso, 0)
-    # pose = pose.Pose()
-    mpc = mpc.MPC()"""
+    mpc = mpc.MPC()
 
-    k3lso = K3lso(None)
+    """k3lso = K3lso(None)
     controller = PoseController(k3lso, 0)
     pose = pose.Pose()
-    action = get_action(np.zeros(3), np.zeros(3))
+    action = get_action_pos(np.zeros(3), np.zeros(3))
     print(action)
-    print(pose.convert_pos_ros(action))
+    print(pose.convert_pos_ros(action))"""
 
-    # wanted_position, wanted_orientation = position_check_gui()
-    """steps = int(input('Number of steps:\n'))
-    step_position, step_orientation = np.zeros(3), np.zeros(3)
 
-    for i in range(steps + 1):
-        action = get_action(step_position, step_orientation)
-        print_output(action, pose.convert_pos_ros(pose, action))
-        step_position += wanted_position / steps
-"""
-
-    """wanted_velocity = velocity_check_gui()
-    action = get_action(wanted_velocity)
-    print(action)"""
+    # wanted_velocity = velocity_check_gui()
+    action = get_action_vel(np.zeros(3))
+    print(action)
 
