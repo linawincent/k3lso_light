@@ -6,7 +6,7 @@ class Application(Frame):
     def __init__(self, master=None):
         Frame.__init__(self, master) 
         self.position = [0, 0, 0]
-        self.orienation = [0, 0, 0]
+        self.orientation = [0, 0, 0]
         self.grid()                   
         self.createWidgets()
 
@@ -40,7 +40,7 @@ class Application(Frame):
         self.zsep.grid(row=10, columnspan=7, sticky='ew')
 
         # roll slider
-        self.rollscalelabel = Label(self, text = 'roll:  ' + '{:,f}'.format(self.orienation[0]))
+        self.rollscalelabel = Label(self, text = 'roll:  ' + '{:,f}'.format(self.orientation[0]))
         self.rollscalelabel.grid(row = 11, column = 1)
         self.rollscale = Scale(self, from_=-np.pi / 4, to=np.pi / 4, orient='horizontal', command=self.update_all_sliders, length=200)
         self.rollscale.bind("<ButtonRelease-1>", self.rollslider_changed, add='+')
@@ -49,7 +49,7 @@ class Application(Frame):
         self.rollsep.grid(row=13, columnspan=7, sticky='ew')
 
         # pitch slider
-        self.pitchscalelabel = Label(self, text='pitch:  ' + '{:,f}'.format(self.orienation[1]))
+        self.pitchscalelabel = Label(self, text='pitch:  ' + '{:,f}'.format(self.orientation[1]))
         self.pitchscalelabel.grid(row=14, column=1)
         self.pitchscale = Scale(self, from_=-np.pi / 4, to=np.pi / 4, orient='horizontal', command=self.update_all_sliders, length=200)
         self.pitchscale.bind("<ButtonRelease-1>", self.pitchslider_changed, add='+')
@@ -58,7 +58,7 @@ class Application(Frame):
         self.pitchsep.grid(row=16, columnspan=7, sticky='ew')
 
         # yaw slider
-        self.yawscalelabel = Label(self, text='yaw:  ' + '{:,f}'.format(self.orienation[2]))
+        self.yawscalelabel = Label(self, text='yaw:  ' + '{:,f}'.format(self.orientation[2]))
         self.yawscalelabel.grid(row=17, column=1)
         self.yawscale = Scale(self, from_=-np.pi / 4, to=np.pi / 4, orient='horizontal', command=self.update_all_sliders, length=200)
         self.yawscale.bind("<ButtonRelease-1>", self.yawslider_changed, add='+')
@@ -155,16 +155,16 @@ class Application(Frame):
         self.zscalelabel.configure(text = 'zpos:  ' + '{:,f}'.format(self.position[2]))
 
     def rollslider_changed(self, event):
-        self.orienation[0] = self.rollscale.get()
-        self.rollscalelabel.configure(text = 'roll:  ' + '{:,f}'.format(self.orienation[0]))
+        self.orientation[0] = self.rollscale.get()
+        self.rollscalelabel.configure(text = 'roll:  ' + '{:,f}'.format(self.orientation[0]))
 
     def pitchslider_changed(self, event):
-        self.orienation[1] = self.pitchscale.get()
-        self.pitchscalelabel.configure(text = 'pitch:  ' + '{:,f}'.format(self.orienation[1]))
+        self.orientation[1] = self.pitchscale.get()
+        self.pitchscalelabel.configure(text = 'pitch:  ' + '{:,f}'.format(self.orientation[1]))
 
     def yawslider_changed(self, event):
-        self.orienation[2] = self.yawscale.get()
-        self.yawscalelabel.configure(text = 'yaw:  ' + '{:,f}'.format(self.orienation[2]))
+        self.orientation[2] = self.yawscale.get()
+        self.yawscalelabel.configure(text = 'yaw:  ' + '{:,f}'.format(self.orientation[2]))
     
     def stepxslider(self, msg):
         if msg == '+':
@@ -172,6 +172,8 @@ class Application(Frame):
 
         if msg == '-':
             self.xscale.set(self.xscale.get() - 0.001)
+         
+        self.position[0] = self.xscale.get()
 
     def stepyslider(self, msg):
         if msg == '+':
@@ -180,12 +182,18 @@ class Application(Frame):
         if msg == '-':
             self.yscale.set(self.yscale.get() - 0.001)
 
+        self.position[1] = self.yscale.get()
+
+
     def stepzslider(self, msg):
         if msg == '+':
             self.zscale.set(self.zscale.get() + 0.001)
 
         if msg == '-':
             self.zscale.set(self.zscale.get() - 0.001)
+    	
+        self.position[2] = self.zscale.get()
+
 
     def steprollslider(self, msg):
         if msg == '+':
@@ -194,6 +202,9 @@ class Application(Frame):
         if msg == '-':
             self.rollscale.set(self.rollscale.get() - 0.01)
 
+        self.orientation[0] = self.rollscale.get()
+
+
     def steppitchslider(self, msg):
         if msg == '+':
             self.pitchscale.set(self.pitchscale.get() + 0.01)
@@ -201,12 +212,16 @@ class Application(Frame):
         if msg == '-':
             self.pitchscale.set(self.pitchscale.get() - 0.01)
 
+        self.orientation[1] = self.pitchscale.get()
+
     def stepyawslider(self, msg):
         if msg == '+':
             self.yawscale.set(self.yawscale.get() + 0.01)
 
         if msg == '-':
             self.yawscale.set(self.yawscale.get() - 0.01)
+
+        self.orientation[2] = self.yawscale.get()
 
     def senddata(self):
 
@@ -244,4 +259,4 @@ class Application(Frame):
         return self.position
 
     def get_orientation(self):
-        return self.orienation  
+        return self.orientation  
