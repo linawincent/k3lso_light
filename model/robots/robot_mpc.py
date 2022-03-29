@@ -25,11 +25,12 @@ class Robot:
         self._motor_enabled_list = self.GetMotorConstants().MOTOR_ENABLED
         self._motor_offset = self.GetMotorConstants().MOTOR_OFFSET
         self._motor_direction = self.GetMotorConstants().MOTOR_DIRECTION
+        # self.joint_names = self._marks.MARK_PARAMS[self._mark]['motor_names']
         # load robot urdf
         # self._quadruped = self._load_urdf()
         # build joints dict
         # self._BuildJointNameToIdDict()
-        # self._BuildUrdfIds()
+        self._BuildUrdfIds()
         # self._BuildMotorIdList()
         # set robot init pose
         # self.ResetPose()
@@ -329,7 +330,7 @@ class Robot:
         Raises:
           ValueError: Unknown category of the joint name.
         """
-        num_joints = self._pybullet_client.getNumJoints(self._quadruped)
+        num_joints = self._num_motors # self._pybullet_client.getNumJoints(self._quadruped)
         self._chassis_link_ids = [-1]
         self._leg_link_ids = []
         self._motor_link_ids = []
@@ -337,9 +338,9 @@ class Robot:
         self._foot_link_ids = []
 
         for i in range(num_joints):
-            joint_info = self._pybullet_client.getJointInfo(self._quadruped, i)
-            joint_name = joint_info[1].decode("UTF-8")
-            joint_id = self._joint_name_to_id[joint_name]
+            # joint_info = self._pybullet_client.getJointInfo(self._quadruped, i)
+            joint_name = self._motors_name[i] # joint_info[1].decode("UTF-8")
+            joint_id = i # self._joint_name_to_id[joint_name]
             if self._constants.CHASSIS_NAME_PATTERN.match(joint_name):
                 self._chassis_link_ids.append(joint_id)
             elif self._constants.HIP_NAME_PATTERN.match(joint_name):
@@ -392,7 +393,7 @@ class Robot:
 
     def GetFootPositionsInBaseFrame(self):
         """Get the robot's foot position in the base frame."""
-        assert len(self._foot_link_ids) == self._num_legs
+        # assert len(self._foot_link_ids) == self._num_legs
         foot_positions = []
         for foot_id in self.GetFootLinkIDs():
             foot_positions.append(
