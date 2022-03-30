@@ -25,12 +25,13 @@ class Robot:
         self._motor_enabled_list = self.GetMotorConstants().MOTOR_ENABLED
         self._motor_offset = self.GetMotorConstants().MOTOR_OFFSET
         self._motor_direction = self.GetMotorConstants().MOTOR_DIRECTION
+        self._foot_link_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
         # self.joint_names = self._marks.MARK_PARAMS[self._mark]['motor_names']
         # load robot urdf
         # self._quadruped = self._load_urdf()
         # build joints dict
         # self._BuildJointNameToIdDict()
-        self._BuildUrdfIds()
+        # self._BuildUrdfIds()
         # self._BuildMotorIdList()
         # set robot init pose
         # self.ResetPose()
@@ -330,14 +331,15 @@ class Robot:
         Returns:
           The relative position of the link.
         """
-        base_position, base_orientation = self._pybullet_client.getBasePositionAndOrientation(self._quadruped)
-        inverse_translation, inverse_rotation = self._pybullet_client.invertTransform(
-            base_position, base_orientation)
+        # base_position, base_orientation = self._pybullet_client.getBasePositionAndOrientation(self._quadruped)
+        # inverse_translation, inverse_rotation = self._pybullet_client.invertTransform(
+        #     base_position, base_orientation)
 
-        link_state = self._pybullet_client.getLinkState(self._quadruped, link_id)
-        link_position = link_state[0]
-        link_local_position, _ = self._pybullet_client.multiplyTransforms(
-            inverse_translation, inverse_rotation, link_position, (0, 0, 0, 1))
+        # link_state = self._pybullet_client.getLinkState(self._quadruped, link_id)
+        # link_position = link_state[0]
+        # link_local_position, _ = self._pybullet_client.multiplyTransforms(
+        #     inverse_translation, inverse_rotation, link_position, (0, 0, 0, 1))
+        link_local_position = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
         return np.array(link_local_position)
 

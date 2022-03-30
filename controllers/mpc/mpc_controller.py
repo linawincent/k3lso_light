@@ -6,6 +6,7 @@ Credits: https://github.com/google-research/motion_imitation
 from mpc_controller import openloop_gait_generator, com_velocity_estimator, raibert_swing_leg_controller, \
     torque_stance_leg_controller, locomotion_controller
 
+import time
 from controllers.controller import Controller
 from controllers.mpc.kinematics import Kinematics
 # from model.robots import simple_motor
@@ -60,7 +61,7 @@ class MPCController(Controller):
             state_estimator=state_estimator,
             swing_leg_controller=sw_controller,
             stance_leg_controller=st_controller,
-            clock=self.get_time_since_reset
+            clock=time.clock
         )
         return controller
 
