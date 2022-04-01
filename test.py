@@ -3,8 +3,11 @@ from controllers.pose.pose_controller import PoseController
 import pose"""
 from model.robots.k3lso.k3lso_mpc import K3lso
 from controllers.mpc.mpc_controller import MPCController
+from pybullet_utils import bullet_client
+
 import mpc
 import numpy as np
+import pybullet
 
 
 def position_check_gui():
@@ -62,7 +65,8 @@ def print_output(pybullet_action, ros_action):
 
 
 if __name__ == '__main__':
-    k3lso = K3lso('1', None)
+    client = bullet_client.BulletClient()
+    k3lso = K3lso('1', None, pybullet_client=client)
     controller = MPCController(k3lso, None)
     mpc = mpc.MPC()
 

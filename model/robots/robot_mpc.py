@@ -10,10 +10,11 @@ class Robot:
     def __init__(self,
                  mark,
                  motor_control_mode,
+                 pybullet_client,
                  z_offset=0.
                  ):
 
-        # self._pybullet_client = pybullet_client
+        self._pybullet_client = pybullet_client
         # self._simulation = simulation
         self._z_offset = z_offset
         self._mark = mark
@@ -28,7 +29,7 @@ class Robot:
         self._foot_link_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
         # self.joint_names = self._marks.MARK_PARAMS[self._mark]['motor_names']
         # load robot urdf
-        # self._quadruped = self._load_urdf()
+        self._quadruped = self._load_urdf()
         # build joints dict
         # self._BuildJointNameToIdDict()
         # self._BuildUrdfIds()
@@ -56,9 +57,9 @@ class Robot:
     def num_motors(self):
         return self._num_motors
 
-    """@property
+    @property
     def pybullet_client(self):
-        return self._pybullet_client"""
+        return self._pybullet_client
 
     @property
     def equipment(self):
