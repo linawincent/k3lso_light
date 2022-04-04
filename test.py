@@ -69,6 +69,7 @@ if __name__ == '__main__':
     k3lso = K3lso('1', None, pybullet_client=client)
     controller = MPCController(k3lso, None)
     mpc = mpc.MPC()
+    print("Init done")
 
     """k3lso = K3lso(None)
     controller = PoseController(k3lso, 0)

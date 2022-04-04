@@ -1,6 +1,7 @@
 import numpy as np
 
 from robot_gym.model.equipment import camera
+from util import pybullet_data
 # from robot_gym.util import pybullet_data
 import model.robots.k3lso.marks
 
@@ -27,17 +28,22 @@ class Robot:
         self._motor_offset = self.GetMotorConstants().MOTOR_OFFSET
         self._motor_direction = self.GetMotorConstants().MOTOR_DIRECTION
         self._foot_link_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-        # self.joint_names = self._marks.MARK_PARAMS[self._mark]['motor_names']
+        self.joint_names = self._marks.MARK_PARAMS[self._mark]['motor_names']
         # load robot urdf
         self._quadruped = self._load_urdf()
         # build joints dict
         # self._BuildJointNameToIdDict()
-        # self._BuildUrdfIds()
+        self._BuildUrdfIds()
         # self._BuildMotorIdList()
         # set robot init pose
         # self.ResetPose()
         # fetch joints' states
         # self.ReceiveObservation()
+
+
+        # Test
+        self._MapContactForceToJointTorques = None
+        self._ComputeMotorAnglesFromFootLocalPosition = None
 
         # build locomotion motor model
         """self._motor_model = self.GetMotorClass()(
@@ -94,12 +100,17 @@ class Robot:
     def GetMotorVelocityGains(self):
         return self.GetMotorConstants().MOTOR_VELOCITY_GAINS
 
+    def set_MapContactForceToJointTorques(self, func):
+        self._MapContactForceToJointTorques = func
+
+    def set_ComputeMotorAnglesFromFootLocalPosition(self, func):
+        self._ComputeMotorAnglesFromFootLocalPosition = func
+
     def MapContactForceToJointTorques(self, leg_id, force):
-        return self._simulation.controller.kinematics_model.MapContactForceToJointTorques(leg_id=leg_id,
-                                                                                          contact_force=force)
+        return self._MapContactForceToJointTorques(leg_id=leg_id, contact_force=force)
 
     def ComputeMotorAnglesFromFootLocalPosition(self, leg_id, foot_position):
-        return self._simulation.controller.kinematics_model.ComputeMotorAnglesFromFootLocalPosition(
+        return self._ComputeMotorAnglesFromFootLocalPosition(
             leg_id=leg_id,
             foot_local_position=foot_position
         )
@@ -160,14 +171,14 @@ class Robot:
             for motor_name in self._GetMotorNames()
         ]
 
-    # def GetBaseRollPitchYaw(self):
-    #     """Get minitaur's base orientation in euler angle in the world frame.
-    #     Returns:
-    #       A tuple (roll, pitch, yaw) of the base in world frame.
-    #     """
-    #     orientation = self.GetTrueBaseOrientation()
-    #     roll_pitch_yaw = self._pybullet_client.getEulerFromQuaternion(orientation)
-    #     return np.asarray(roll_pitch_yaw)
+    def GetBaseRollPitchYaw(self):
+        """Get minitaur's base orientation in euler angle in the world frame.
+        Returns:
+          A tuple (roll, pitch, yaw) of the base in world frame.
+        """
+        orientation = self.GetTrueBaseOrientation()
+        roll_pitch_yaw = self._pybullet_client.getEulerFromQuaternion(orientation)
+        return np.asarray(roll_pitch_yaw)
 
     def GetHipPositionsInBaseFrame(self):
         return self._constants.DEFAULT_HIP_POSITIONS
@@ -332,15 +343,15 @@ class Robot:
         Returns:
           The relative position of the link.
         """
-        # base_position, base_orientation = self._pybullet_client.getBasePositionAndOrientation(self._quadruped)
-        # inverse_translation, inverse_rotation = self._pybullet_client.invertTransform(
-        #     base_position, base_orientation)
+        base_position, base_orientation = self._pybullet_client.getBasePositionAndOrientation(self._quadruped)
+        inverse_translation, inverse_rotation = self._pybullet_client.invertTransform(
+            base_position, base_orientation)
 
-        # link_state = self._pybullet_client.getLinkState(self._quadruped, link_id)
-        # link_position = link_state[0]
-        # link_local_position, _ = self._pybullet_client.multiplyTransforms(
-        #     inverse_translation, inverse_rotation, link_position, (0, 0, 0, 1))
-        link_local_position = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        link_state = self._pybullet_client.getLinkState(self._quadruped, link_id)
+        link_position = link_state[0]
+        link_local_position, _ = self._pybullet_client.multiplyTransforms(
+            inverse_translation, inverse_rotation, link_position, (0, 0, 0, 1))
+        # link_local_position = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
         return np.array(link_local_position)
 
