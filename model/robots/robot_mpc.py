@@ -369,6 +369,8 @@ class Robot:
             foot_positions.append(
                 self.link_position_in_base_frame(link_id=foot_id)
             )
+        
+        print(foot_positions)
         return np.array(foot_positions)
 
     def Terminate(self):
