@@ -6,6 +6,7 @@ from controllers.mpc.mpc_controller import MPCController
 from pybullet_utils import bullet_client
 
 import mpc
+import time
 import numpy as np
 import pybullet
 
@@ -80,6 +81,11 @@ if __name__ == '__main__':
 
 
     # wanted_velocity = velocity_check_gui()
-    action = get_action_vel(np.zeros(3))
-    print(action)
+    velocity = np.zeros(3)
+
+    while True:
+        action = get_action_vel(velocity)
+        time.sleep(1)
+        k3lso.update_motor_angles(action)
+        print(action)
 

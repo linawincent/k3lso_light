@@ -16,6 +16,7 @@ class Robot:
                  ):
 
         self._pybullet_client = pybullet_client
+        self.motor_angles = []
         # self._simulation = simulation
         self._z_offset = z_offset
         self._mark = mark
@@ -245,11 +246,12 @@ class Robot:
 
     def GetMotorAngles(self):
         # TODO: from ROS node
-        motor_angles = [state[0] for state in self._joint_states]
-        motor_angles = np.multiply(
-            np.asarray(motor_angles) - np.asarray(self._motor_offset),
-            self._motor_direction)
-        return motor_angles
+        # motor_angles = [state[0] for state in self._joint_states]
+        # motor_angles = np.multiply(
+        #     np.asarray(motor_angles) - np.asarray(self._motor_offset),
+        #     self._motor_direction)
+
+        return self.motor_angles
 
     def GetTrueMotorAngles(self):
         # TODO: from ROS node, same as previous?
@@ -372,3 +374,5 @@ class Robot:
     def Terminate(self):
         pass
 
+    def update_motor_angles(self, angles):
+        self.motor_angles = angles
