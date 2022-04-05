@@ -36,6 +36,7 @@ class MPCController(Controller):
             duty_factor=self._constants.DUTY_FACTOR,
             initial_leg_phase=self._constants.INIT_PHASE_FULL_CYCLE)
         state_estimator = com_velocity_estimator.COMVelocityEstimator(robot, window_size=20)
+        print(gait_generator.__dict__)
 
         sw_controller = raibert_swing_leg_controller.RaibertSwingLegController(
             robot,

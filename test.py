@@ -66,7 +66,7 @@ def print_output(pybullet_action, ros_action):
 
 
 if __name__ == '__main__':
-    client = bullet_client.BulletClient()
+    client = bullet_client.BulletClient(pybullet.DIRECT)
     k3lso = K3lso('1', None, pybullet_client=client)
     controller = MPCController(k3lso, None)
     mpc = mpc.MPC()
@@ -81,7 +81,7 @@ if __name__ == '__main__':
 
 
     # wanted_velocity = velocity_check_gui()
-    velocity = np.zeros(3)
+    velocity = [0, 0, 0]
 
     while True:
         action = get_action_vel(velocity)

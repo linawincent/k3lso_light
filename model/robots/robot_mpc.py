@@ -33,9 +33,9 @@ class Robot:
         # load robot urdf
         self._quadruped = self._load_urdf()
         # build joints dict
-        # self._BuildJointNameToIdDict()
+        self._BuildJointNameToIdDict()
         self._BuildUrdfIds()
-        # self._BuildMotorIdList()
+        self._BuildMotorIdList()
         # set robot init pose
         # self.ResetPose()
         # fetch joints' states
@@ -45,7 +45,6 @@ class Robot:
         # Test
         self._MapContactForceToJointTorques = None
         self._ComputeMotorAnglesFromFootLocalPosition = None
-
         # build locomotion motor model
         """self._motor_model = self.GetMotorClass()(
             kp=self.GetMotorConstants().MOTOR_POSITION_GAINS,
@@ -293,7 +292,13 @@ class Robot:
         observation.extend(self.GetTrueBaseRollPitchYawRate())
         return observation
 
-   
+    def _BuildJointNameToIdDict(self):
+        num_joints = self._pybullet_client.getNumJoints(self._quadruped)
+        self._joint_name_to_id = {}
+        for i in range(num_joints):
+            joint_info = self._pybullet_client.getJointInfo(self._quadruped, i)
+            self._joint_name_to_id[joint_info[1].decode("UTF-8")] = joint_info[0]
+            
     def _BuildUrdfIds(self):
         """Build the link Ids from its name in the URDF file.
         Raises:
@@ -307,22 +312,28 @@ class Robot:
         self._foot_link_ids = []
 
         for i in range(num_joints):
-            # joint_info = self._pybullet_client.getJointInfo(self._quadruped, i)
-            joint_name = self._motors_name[i] # joint_info[1].decode("UTF-8")
-            joint_id = i # self._joint_name_to_id[joint_name]
+            joint_info = self._pybullet_client.getJointInfo(self._quadruped, i)
+            joint_name = joint_info[1].decode("UTF-8")
+            joint_id = self._joint_name_to_id[joint_name]
             if self._constants.CHASSIS_NAME_PATTERN.match(joint_name):
                 self._chassis_link_ids.append(joint_id)
+                print("chassi")
             elif self._constants.HIP_NAME_PATTERN.match(joint_name):
                 self._motor_link_ids.append(joint_id)
+                print("hip")
             elif self._constants.UPPER_NAME_PATTERN.match(joint_name):
                 self._motor_link_ids.append(joint_id)
+                print("upper")
             # We either treat the lower leg or the toe as the foot link, depending on
             # the urdf version used.
             elif self._constants.LOWER_NAME_PATTERN.match(joint_name):
                 self._knee_link_ids.append(joint_id)
+                print("lower")
             elif self._constants.TOE_NAME_PATTERN.match(joint_name):
                 # assert self._urdf_filename == URDF_WITH_TOES
                 self._foot_link_ids.append(joint_id)
+                print("foot")
+                print(self._constants.TOE_NAME_PATTERN)
             else:
                 raise ValueError("Unknown category of joint %s" % joint_name)
 
