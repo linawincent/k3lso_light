@@ -57,7 +57,7 @@ height = 0.25"""
 """ Updated constants"""
 l = 0.6
 w = 0.256
-hip = 0.049
+hip = 0.0049
 leg = 0.34
 foot = 0.34
 y_dist = 0.285
