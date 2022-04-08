@@ -1,27 +1,64 @@
 import numpy as np
 
 
+def q_to_euler(q):
+    """ Returns the roll, pitch, yaw from the IMU quaternions """
+    orientation = np.zeros(3)
+    orientation[0] = np.arctan(2 * (q[0] * q[1] + q[2] * q[3]) / (1 - 2 * (q[1]**2 * q[2]**2)))
+    orientation[1] = np.arcsin(2 * (q[0] * q[2] - q[1] * q[3]))
+    orientation[2] = np.arctan(2 * (q[0] * q[3] + q[1] * q[2]) / (1 - 2 * (q[2]**2 * q[3]**2)))
+    return orientation
+
+
 class IMU:
 
-    def __init__(self):
+    def __init__(self, start_pos):
         # TODO: quaternions from ROS
-        self.qx = 0
-        self.qy = 0
-        self.qz = 0
-        self.qw = 0
-        self.pos = np.array([0., 0., 0.])
+        self.q = np.array([0., 0., 0.])
+        self.angular_vel = np.array([0., 0., 0.])
+        self.lin_acc = np.array([0., 0., 0.])
+
+        self.position = start_pos
+        self.orientation = np.array([0., 0., 0.])
+        self.velocity = np.array([0., 0., 0.])
 
     def get_position(self):
-        return [self.x, self.y, self.z]
+        return self.position
 
     def get_orientation(self):
-        return [self]
+        return q_to_euler(self.q)
 
-    def add_pos(self, lin_acc, ang_vel, time):
-        t = np.power(time, 2) / 2
+    def get_velocity(self):
+        return self.velocity
+
+    def get_angular_momentum(self):
+        return self.angular_vel
+
+    def get_lin_acc(self):
+        return self.lin_acc
+
+    def get_q(self):
+        return self.q
+
+    def update(self, q, lin_acc, ang_vel, dt):
         g = 10.1  # gravitational offset for the acceleration in z-direction
-        self.pos += np.multiply(lin_acc, t)
-        self.x += lin_acc[0] / 2 * time**2
-        self.y += lin_acc[1] / 2 * time ** 2
-        self.z += ((lin_acc[2] - g) / 2 * time ** 2)
+
+        """ Update values from IMU"""
+        self.q = q
+        self.angular_vel = ang_vel
+        self.lin_acc = lin_acc
+
+        """ Rotation matrix for q"""
+        rot_matrix = np.array([
+            (1 - 2 * (q[2] ** 2 * q[3] ** 2)), 2 * (q[1] * q[2] + q[0] * q[3]), 2 * (q[0] * q[2] + q[1] * q[3]),
+            2 * (q[1] * q[2] + q[0] * q[3]), (1 - 2 * (q[1]**2 * q[3]**2)), 2 * (q[2] * q[3] + q[0] * q[1]),
+            2 * (q[1] * q[3] + q[0] * q[2]), 2 * (q[0] * q[1] + q[2] * q[3]), (1 - 2 * (q[1]**2 * q[2]**2))
+        ])
+        rot_matrix = rot_matrix.reshape((3, 3))
+
+        """ Calculate position and velocity in world frame"""
+        self.velocity += np.matmul(rot_matrix, self.lin_acc) * dt
+        self.position += self.velocity * dt + 0.5 * np.matmul(rot_matrix, self.lin_acc) * dt * dt
+
+
 
