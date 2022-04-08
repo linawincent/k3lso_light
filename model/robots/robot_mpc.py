@@ -2,6 +2,7 @@ import numpy as np
 
 from robot_gym.model.equipment import camera
 from util import pybullet_data
+import imu
 # from robot_gym.util import pybullet_data
 import model.robots.k3lso.marks
 
@@ -80,21 +81,18 @@ class Robot:
         pass
 
     def GetBasePosition(self):
-        """Get the position of Rex's base.
+        """Get the position of K3slo's base.
         Returns:
-          The position of Rex's base.
+          The position of K3lso's base.
         """
-        position, _ = (self._pybullet_client.getBasePositionAndOrientation(self._quadruped))
-        return position
+        return self.imu.get_position()
 
     def GetBaseRollPitchYaw(self):
-        """Get the orientation of Rex's base.
+        """Get the orientation of K3lso's base.
         Returns:
-          The orientation of Rex's base.
+          The orientation of K3lso's base.
         """
-        _, orient = (self._pybullet_client.getBasePositionAndOrientation(self._quadruped))
-        orient = self._pybullet_client.getEulerFromQuaternion(orient)
-        return orient
+        return self.imu.get_orientation()
 
     def GetMotorPositionGains(self):
         return self.GetMotorConstants().MOTOR_POSITION_GAINS
@@ -173,30 +171,19 @@ class Robot:
             for motor_name in self._GetMotorNames()
         ]
 
-    def GetBaseRollPitchYaw(self):
-        """Get minitaur's base orientation in euler angle in the world frame.
-        Returns:
-          A tuple (roll, pitch, yaw) of the base in world frame.
-        """
-        orientation = self.GetTrueBaseOrientation()
-        roll_pitch_yaw = self._pybullet_client.getEulerFromQuaternion(orientation)
-        return np.asarray(roll_pitch_yaw)
-
     def GetHipPositionsInBaseFrame(self):
         return self._constants.DEFAULT_HIP_POSITIONS
 
     def GetBaseVelocity(self):
-        """Get the linear velocity of minitaur's base.
+        """Get the linear velocity of K3lso's base.
         Returns:
-          The velocity of minitaur's base.
+          The velocity of K3lso's base.
         """
-        velocity, _ = self._pybullet_client.getBaseVelocity(self._quadruped)
-        return velocity
+        return self.imu.get_velocity()
 
     def GetTrueBaseOrientation(self):
-        pos, orn = self._pybullet_client.getBasePositionAndOrientation(
-            self._quadruped)
-        return orn
+        # TODO: Other true/predicitve orientation compared to before
+        return self.imu.get_orientation()
 
     '''
         TransformAngularVelocityToLocalFrame only used in minotaur
@@ -222,15 +209,11 @@ class Robot:
     #     return np.asarray(relative_velocity)
 
     def GetBaseRollPitchYawRate(self):
-        # TODO: IMU implementation
-        """Get the rate of orientation change of the minitaur's base in euler angle.
+        """Get the rate of orientation change of K3lso's base in euler angle.
         Returns:
           rate of (roll, pitch, yaw) change of the minitaur's base.
         """
-        angular_velocity = self._pybullet_client.getBaseVelocity(self._quadruped)[1]
-        orientation = self.GetTrueBaseOrientation()
-        return self.TransformAngularVelocityToLocalFrame(angular_velocity,
-                                                         orientation)
+        return self.imu.get_angular_velocity()
 
     def GetFootContacts(self):
         all_contacts = self._pybullet_client.getContactPoints(bodyA=self._quadruped)
@@ -268,7 +251,7 @@ class Robot:
         return self.GetMotorAngles()
 
     def GetPDObservation(self):
-        # TODO: Velocities from ROS?
+        # TODO: From ROS
         self.ReceiveObservation()
         observation = []
         observation.extend(self.GetTrueMotorAngles())
@@ -278,6 +261,7 @@ class Robot:
         return np.array(q), np.array(qdot)
 
     def GetTrueMotorVelocities(self):
+        # TODO: From ROS
         """Get the velocity of all eight motors.
         Returns:
           Velocities of all eight motors.

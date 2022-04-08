@@ -31,7 +31,7 @@ class IMU:
     def get_velocity(self):
         return self.velocity
 
-    def get_angular_momentum(self):
+    def get_angular_velocity(self):
         return self.angular_vel
 
     def get_lin_acc(self):
@@ -57,6 +57,7 @@ class IMU:
         rot_matrix = rot_matrix.reshape((3, 3))
 
         """ Calculate position and velocity in world frame"""
+        self.orientation = q_to_euler(q)
         self.velocity += np.matmul(rot_matrix, self.lin_acc) * dt
         self.position += self.velocity * dt + 0.5 * np.matmul(rot_matrix, self.lin_acc) * dt * dt
 
