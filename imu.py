@@ -14,7 +14,7 @@ class IMU:
 
     def __init__(self, start_pos):
         # TODO: quaternions from ROS
-        self.q = np.array([0., 0., 0.])
+        self.q = np.array([0., 0., 0., 0.])
         self.angular_vel = np.array([0., 0., 0.])
         self.lin_acc = np.array([0., 0., 0.])
 
