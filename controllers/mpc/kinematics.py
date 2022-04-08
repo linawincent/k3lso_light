@@ -7,7 +7,6 @@ class Kinematics:
                  robot
                  ):
 
-        self._pybullet_client = robot.pybullet_client
         self._robot = robot
 
     def MapContactForceToJointTorques(self, leg_id, all_motor_torques):
