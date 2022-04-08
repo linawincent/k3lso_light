@@ -1,6 +1,9 @@
 import re
 import numpy as np
 
+# TODO: Check if theses are correct. Atm, we blend both this and ctr_constants
+
+
 NUM_LEG = 4
 START_POS = [0, 0, 0.48]
 INIT_ORIENTATION = [0, 0, 0]
