@@ -369,7 +369,7 @@ class Robot:
 
         local_foot_position = np.array([
             self._ctrl_constants.leg * (np.cos(motor_angles[1] + motor_angles[2]) - np.cos(motor_angles[1])),
-            self._ctrl_constants.mpc_hip_lenght * np.sin(motor_angles[0]),
+            self._ctrl_constants.mpc_hip_lenght * np.cos(motor_angles[0]),
             self._ctrl_constants.leg * (np.sin(motor_angles[1]) - np.sin(motor_angles[1] + motor_angles[2]))
         ])
 

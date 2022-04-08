@@ -80,7 +80,7 @@ foot_rear_left_v = np.array([-x_dist / 2, y_dist / 2, -height])
 # -------------------------------------------------
 
 # coordinates
-mpc_l = 0.3
+mpc_l = 0.6
 mpc_w = 0.13
 mpc_hip_lenght = 0.13
 mpc_hip_FR = np.array([mpc_l/2, -mpc_w/2, 0])
