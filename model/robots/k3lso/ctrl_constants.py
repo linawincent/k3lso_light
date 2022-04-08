@@ -73,3 +73,18 @@ foot_front_right_v = np.array([x_dist / 2, -y_dist / 2, -height])
 foot_front_left_v = np.array([x_dist / 2, y_dist / 2, -height])
 foot_rear_right_v = np.array([-x_dist / 2, -y_dist / 2, -height])
 foot_rear_left_v = np.array([-x_dist / 2, y_dist / 2, -height])
+
+
+# -------------------------------------------------
+# MPC controller
+# -------------------------------------------------
+
+# coordinates
+mpc_l = 0.3
+mpc_w = 0.13
+mpc_hip_lenght = 0.13
+mpc_hip_FR = np.array([mpc_l/2, -mpc_w/2, 0])
+mpc_hip_FL = np.array([mpc_l/2, mpc_w/2, 0])
+mpc_hip_RR = np.array([-mpc_l/2, -mpc_w/2, 0])
+mpc_hip_RL = np.array([-mpc_l/2, -mpc_w/2, 0])
+mpc_link_default = [mpc_hip_FR, mpc_hip_FL, mpc_hip_RR, mpc_hip_RL]

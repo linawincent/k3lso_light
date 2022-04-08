@@ -9,33 +9,35 @@ import model.robots.k3lso.marks
 class Robot:
 
     def __init__(self,
+                 imu,
                  mark,
                  motor_control_mode,
                  pybullet_client,
-                 z_offset=0.
+                 z_offset=0.0
                  ):
 
-        self._pybullet_client = pybullet_client
+        self.imu = imu
+        self._pybullet_client = None
         self.motor_angles = []
         # self._simulation = simulation
         self._z_offset = z_offset
         self._mark = mark
         self._marks = self.GetMarks()
         self._constants = self.GetConstants()
+        self._ctrl_constants = self.GetCtrlConstants()
         self._num_motors = self._marks.MARK_PARAMS[self._mark]['num_motors']
         self._num_legs = self._marks.MARK_PARAMS[self._mark]['num_legs']
         self._motors_name = self._marks.MARK_PARAMS[self._mark]['motor_names']
         self._motor_enabled_list = self.GetMotorConstants().MOTOR_ENABLED
         self._motor_offset = self.GetMotorConstants().MOTOR_OFFSET
         self._motor_direction = self.GetMotorConstants().MOTOR_DIRECTION
-        self._foot_link_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
         self.joint_names = self._marks.MARK_PARAMS[self._mark]['motor_names']
         # load robot urdf
-        self._quadruped = self._load_urdf()
-        # build joints dict
-        self._BuildJointNameToIdDict()
-        self._BuildUrdfIds()
-        self._BuildMotorIdList()
+        # self._quadruped = self._load_urdf()
+        # # build joints dict
+        # self._BuildJointNameToIdDict()
+        # self._BuildUrdfIds()
+        # self._BuildMotorIdList()
         # set robot init pose
         # self.ResetPose()
         # fetch joints' states
@@ -196,25 +198,28 @@ class Robot:
             self._quadruped)
         return orn
 
-    def TransformAngularVelocityToLocalFrame(self, angular_velocity, orientation):
-        """Transform the angular velocity from world frame to robot's frame.
-        Args:
-          angular_velocity: Angular velocity of the robot in world frame.
-          orientation: Orientation of the robot represented as a quaternion.
-        Returns:
-          angular velocity of based on the given orientation.
-        """
-        # Treat angular velocity as a position vector, then transform based on the
-        # orientation given by dividing (or multiplying with inverse).
-        # Get inverse quaternion assuming the vector is at 0,0,0 origin.
-        _, orientation_inversed = self._pybullet_client.invertTransform([0, 0, 0],
-                                                                        orientation)
-        # Transform the angular_velocity at neutral orientation using a neutral
-        # translation and reverse of the given orientation.
-        relative_velocity, _ = self._pybullet_client.multiplyTransforms(
-            [0, 0, 0], orientation_inversed, angular_velocity,
-            self._pybullet_client.getQuaternionFromEuler([0, 0, 0]))
-        return np.asarray(relative_velocity)
+    '''
+        TransformAngularVelocityToLocalFrame only used in minotaur
+    '''
+    # def TransformAngularVelocityToLocalFrame(self, angular_velocity, orientation):
+    #     """Transform the angular velocity from world frame to robot's frame.
+    #     Args:
+    #       angular_velocity: Angular velocity of the robot in world frame.
+    #       orientation: Orientation of the robot represented as a quaternion.
+    #     Returns:
+    #       angular velocity of based on the given orientation.
+    #     """
+    #     # Treat angular velocity as a position vector, then transform based on the
+    #     # orientation given by dividing (or multiplying with inverse).
+    #     # Get inverse quaternion assuming the vector is at 0,0,0 origin.
+    #     _, orientation_inversed = self._pybullet_client.invertTransform([0, 0, 0],
+    #                                                                     orientation)
+    #     # Transform the angular_velocity at neutral orientation using a neutral
+    #     # translation and reverse of the given orientation.
+    #     relative_velocity, _ = self._pybullet_client.multiplyTransforms(
+    #         [0, 0, 0], orientation_inversed, angular_velocity,
+    #         self._pybullet_client.getQuaternionFromEuler([0, 0, 0]))
+    #     return np.asarray(relative_velocity)
 
     def GetBaseRollPitchYawRate(self):
         # TODO: IMU implementation
@@ -317,17 +322,23 @@ class Robot:
             joint_id = self._joint_name_to_id[joint_name]
             if self._constants.CHASSIS_NAME_PATTERN.match(joint_name):
                 self._chassis_link_ids.append(joint_id)
+                print("chassi")
             elif self._constants.HIP_NAME_PATTERN.match(joint_name):
                 self._motor_link_ids.append(joint_id)
+                print("hip")
             elif self._constants.UPPER_NAME_PATTERN.match(joint_name):
                 self._motor_link_ids.append(joint_id)
+                print("upper")
             # We either treat the lower leg or the toe as the foot link, depending on
             # the urdf version used.
             elif self._constants.LOWER_NAME_PATTERN.match(joint_name):
                 self._knee_link_ids.append(joint_id)
+                print("lower")
             elif self._constants.TOE_NAME_PATTERN.match(joint_name):
                 # assert self._urdf_filename == URDF_WITH_TOES
                 self._foot_link_ids.append(joint_id)
+                print("foot")
+                print(self._constants.TOE_NAME_PATTERN)
             else:
                 raise ValueError("Unknown category of joint %s" % joint_name)
 
@@ -343,6 +354,7 @@ class Robot:
 
         return
 
+
     def link_position_in_base_frame(self, link_id):
         """Computes the link's local position in the robot frame.
         Args:
@@ -350,17 +362,18 @@ class Robot:
         Returns:
           The relative position of the link.
         """
-        base_position, base_orientation = self._pybullet_client.getBasePositionAndOrientation(self._quadruped)
-        inverse_translation, inverse_rotation = self._pybullet_client.invertTransform(
-            base_position, base_orientation)
+        # Asssumes link_id has values between 0,1,2,3
+        motor_angles = self.motor_angles[link_id : link_id + 3]
 
-        link_state = self._pybullet_client.getLinkState(self._quadruped, link_id)
-        link_position = link_state[0]
-        link_local_position, _ = self._pybullet_client.multiplyTransforms(
-            inverse_translation, inverse_rotation, link_position, (0, 0, 0, 1))
-        # link_local_position = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        local_link_position = self._ctrl_constants.mpc_link_default[link_id]
 
-        return np.array(link_local_position)
+        local_foot_position = np.array([
+            self._ctrl_constants.leg * (np.cos(motor_angles[1] + motor_angles[2]) - np.cos(motor_angles[1])),
+            self._ctrl_constants.mpc_hip_lenght * np.sin(motor_angles[0]),
+            self._ctrl_constants.leg * (np.sin(motor_angles[1]) - np.sin(motor_angles[1] + motor_angles[2]))
+        ])
+
+        return local_link_position + local_foot_position
 
     def GetFootLinkIDs(self):
         """Get list of IDs for all foot links."""
@@ -374,6 +387,8 @@ class Robot:
             foot_positions.append(
                 self.link_position_in_base_frame(link_id=foot_id)
             )
+        
+        print(foot_positions)
         return np.array(foot_positions)
 
     def Terminate(self):
@@ -381,3 +396,4 @@ class Robot:
 
     def update_motor_angles(self, angles):
         self.motor_angles = angles
+
