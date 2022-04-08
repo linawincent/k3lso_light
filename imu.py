@@ -4,9 +4,11 @@ import numpy as np
 class IMU:
 
     def __init__(self):
-        self.x = 0
-        self.y = 0
-        self.z = 0
+        # TODO: quaternions from ROS
+        self.qx = 0
+        self.qy = 0
+        self.qz = 0
+        self.qw = 0
         self.pos = np.array([0., 0., 0.])
 
     def get_position(self):

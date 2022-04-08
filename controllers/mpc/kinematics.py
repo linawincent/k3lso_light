@@ -111,7 +111,7 @@ class Kinematics:
 
     def _EndEffectorIK(self, leg_id, position, position_in_world_frame):
         """Calculate the joint positions from the end effector position."""
-        assert len(self._robot.GetFootLinkIds) == self._robot.GetConstants().NUM_LEG
+        # assert len(self._robot.GetFootLinkIds) == self._robot.GetConstants().NUM_LEG
         toe_id = self._robot.GetFootLinkIds[leg_id]
         motors_per_leg = self._robot.num_motors // self._robot.GetConstants().NUM_LEG
         joint_position_idxs = [

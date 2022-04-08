@@ -317,23 +317,17 @@ class Robot:
             joint_id = self._joint_name_to_id[joint_name]
             if self._constants.CHASSIS_NAME_PATTERN.match(joint_name):
                 self._chassis_link_ids.append(joint_id)
-                print("chassi")
             elif self._constants.HIP_NAME_PATTERN.match(joint_name):
                 self._motor_link_ids.append(joint_id)
-                print("hip")
             elif self._constants.UPPER_NAME_PATTERN.match(joint_name):
                 self._motor_link_ids.append(joint_id)
-                print("upper")
             # We either treat the lower leg or the toe as the foot link, depending on
             # the urdf version used.
             elif self._constants.LOWER_NAME_PATTERN.match(joint_name):
                 self._knee_link_ids.append(joint_id)
-                print("lower")
             elif self._constants.TOE_NAME_PATTERN.match(joint_name):
                 # assert self._urdf_filename == URDF_WITH_TOES
                 self._foot_link_ids.append(joint_id)
-                print("foot")
-                print(self._constants.TOE_NAME_PATTERN)
             else:
                 raise ValueError("Unknown category of joint %s" % joint_name)
 
@@ -380,8 +374,6 @@ class Robot:
             foot_positions.append(
                 self.link_position_in_base_frame(link_id=foot_id)
             )
-        
-        print(foot_positions)
         return np.array(foot_positions)
 
     def Terminate(self):

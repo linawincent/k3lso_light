@@ -81,8 +81,9 @@ if __name__ == '__main__':
 
 
     # wanted_velocity = velocity_check_gui()
-    velocity = [0, 0, 0]
-
+    velocity = np.array([0, 0, 0])
+    # print(velocity)
+    # print(np.transpose(velocity))
     while True:
         action = get_action_vel(velocity)
         time.sleep(1)
