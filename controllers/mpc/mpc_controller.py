@@ -21,8 +21,6 @@ class MPCController(Controller):
         self._constants = robot.GetCtrlConstants()
         self._mpc_controller = self._setup_controller(self._robot)
         self._kinematics = Kinematics(self._robot)
-        self._robot.set_MapContactForceToJointTorques(self.kinematics_model.MapContactForceToJointTorques)
-        self._robot.set_ComputeMotorAnglesFromFootLocalPosition(self.kinematics_model.ComputeMotorAnglesFromFootLocalPosition)
 
     @property
     def kinematics_model(self):

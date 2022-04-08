@@ -1,4 +1,3 @@
-from operator import length_hint
 import numpy as np
 
 from robot_gym.model.equipment import camera
@@ -33,11 +32,7 @@ class Robot:
         self.joint_names = self._marks.MARK_PARAMS[self._mark]['motor_names']
         self._foot_link_ids = [3, 7, 11, 15]
         self.motor_angles = np.zeros(12)
-
-        # Test
-        self._MapContactForceToJointTorques = None
-        self._ComputeMotorAnglesFromFootLocalPosition = None
-
+        self.motor_torques = np.zeros(12)
 
     @property
     def num_legs(self):
@@ -81,21 +76,13 @@ class Robot:
     def GetMotorVelocityGains(self):
         return self.GetMotorConstants().MOTOR_VELOCITY_GAINS
 
-    def set_MapContactForceToJointTorques(self, func):
-        self._MapContactForceToJointTorques = func
-
-    def set_ComputeMotorAnglesFromFootLocalPosition(self, func):
-        self._ComputeMotorAnglesFromFootLocalPosition = func
-
     def MapContactForceToJointTorques(self, leg_id, force):
         return self._MapContactForceToJointTorques(leg_id=leg_id, contact_force=force)
 
     def ComputeMotorAnglesFromFootLocalPosition(self, leg_id, foot_position):
-        return self._ComputeMotorAnglesFromFootLocalPosition(
-            leg_id=leg_id,
-            foot_local_position=foot_position
-        )
-
+        motor_angles = self.motor_angles[leg_id : leg_id + 3]
+        motor_index = [*range(leg_id, leg_id + 3)]
+        return motor_index, motor_angles
     @property
     def GetJointStates(self):
         return self._joint_states
@@ -148,10 +135,8 @@ class Robot:
         """
         # Asssumes link_id has values between 0,1,2,3
         link_id = self._foot_link_ids.index(link_id)
-        print(link_id)
+
         motor_angles = self.motor_angles[link_id : (link_id + 3)]
-        print(len(motor_angles))
-        print(motor_angles)
 
         local_link_position = self._ctrl_constants.mpc_link_default[link_id]
 
@@ -184,4 +169,7 @@ class Robot:
 
     def update_motor_angles(self, angles):
         self.motor_angles = angles
+
+    def update_motor_torques(self, angles):
+        self.motor_torques
 
