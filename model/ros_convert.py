@@ -31,6 +31,5 @@ def convert_to_ros(command):
 
 def convert_from_ros(command):
     """ From ROS-angles to Python-angles """
-    transformed_command = invert(np.array(command) - offset_orig / pi2) - (np.array(command) - offset_motor) / pi2
-    return transformed_command
-
+    transformed_command = pi2 * invert(np.array(command) - offset_orig / pi2) + offset_motor
+    return transformed_command.tolist()

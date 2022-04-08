@@ -7,7 +7,6 @@ class Kinematics:
                  robot
                  ):
 
-        self._pybullet_client = robot.pybullet_client
         self._robot = robot
 
     def MapContactForceToJointTorques(self, leg_id, all_motor_torques):
@@ -24,8 +23,7 @@ class Kinematics:
 
         return motor_torques
 
-    def ComputeMotorAnglesFromFootLocalPosition(self, leg_id,
-                                                angles):
+    def ComputeMotorAnglesFromFootLocalPosition(self, leg_id, angles):
         # TODO: motor angles from ROS, name change
         """Use IK to compute the motor angles, given the foot link's local position.
         Args:
