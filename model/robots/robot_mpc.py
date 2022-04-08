@@ -12,8 +12,8 @@ class Robot:
     def __init__(self,
                  imu,
                  mark,
-                 motor_control_mode,
                  pybullet_client,
+                 motor_control_mode = 1,
                  z_offset=0.0
                                   ):
 
@@ -33,6 +33,7 @@ class Robot:
         self._foot_link_ids = [3, 7, 11, 15]
         self.motor_angles = np.zeros(12)
         self.motor_torques = np.zeros(12)
+
 
     @property
     def num_legs(self):
@@ -77,12 +78,20 @@ class Robot:
         return self.GetMotorConstants().MOTOR_VELOCITY_GAINS
 
     def MapContactForceToJointTorques(self, leg_id, force):
-        return self._MapContactForceToJointTorques(leg_id=leg_id, contact_force=force)
+        leg_id = leg_id * 3
+        motor_torques = {
+            leg_id: self.motor_torques[leg_id],
+            leg_id + 1: self.motor_torques[leg_id + 1],
+            leg_id + 2: self.motor_torques[leg_id + 2]
+        }
+        return motor_torques
 
     def ComputeMotorAnglesFromFootLocalPosition(self, leg_id, foot_position):
+        leg_id = leg_id * 3
         motor_angles = self.motor_angles[leg_id : leg_id + 3]
         motor_index = [*range(leg_id, leg_id + 3)]
         return motor_index, motor_angles
+
     @property
     def GetJointStates(self):
         return self._joint_states
@@ -135,10 +144,12 @@ class Robot:
         """
         # Asssumes link_id has values between 0,1,2,3
         link_id = self._foot_link_ids.index(link_id)
-
-        motor_angles = self.motor_angles[link_id : (link_id + 3)]
-
+        
         local_link_position = self._ctrl_constants.mpc_link_default[link_id]
+
+
+        link_id = 3 * link_id
+        motor_angles = self.motor_angles[link_id : (link_id + 3)]
 
         local_foot_position = np.array([
             self._ctrl_constants.leg * (np.cos(motor_angles[1] + motor_angles[2]) - np.cos(motor_angles[1])),
@@ -161,7 +172,6 @@ class Robot:
                 self.link_position_in_base_frame(link_id=foot_id)
             )
         
-        print(foot_positions)
         return np.array(foot_positions)
 
     def Terminate(self):
