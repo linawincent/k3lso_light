@@ -180,6 +180,5 @@ class Robot:
     def update_motor_angles(self, angles):
         self.motor_angles = angles
 
-    def update_motor_torques(self, angles):
-        self.motor_torques
-
+    def update_motor_torques(self, torques):
+        self.motor_torques = torques

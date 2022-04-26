@@ -1,6 +1,6 @@
 import threading
 import numpy as np
-from controllers.pose.pose_controller import PoseController
+from controllers.mpc.mpc_controller import MPCController
 from model.robots.k3lso.k3lso import K3lso
 from gui import Application
 
@@ -9,7 +9,7 @@ class MPC:
 
     def __init__(self):
         kelso = K3lso(None)
-        self.controller = PoseController(kelso, 0)
+        self.controller = MPCController(kelso, 0)
         self.signal = []
         self.app = None
 
@@ -41,8 +41,8 @@ class MPC:
         transformed_command += offset_orig / (2 * 3.14159265)
         return transformed_command.tolist()
 
-    def update_signal(self, position, orientation):
-        self.controller.update_controller_params(position, orientation)
+    def update_signal(self, position, orientation, torque):
+        self.controller.update_controller_params(position, orientation, torque)
         self.signal = self.controller.get_action()
 
     def get_signal(self):
