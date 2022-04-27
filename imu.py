@@ -65,6 +65,3 @@ class IMU:
         self.orientation = q_to_euler(q)
         self.velocity += np.matmul(rot_matrix, self.lin_acc) * dt
         self.position += self.velocity * dt  # + 0.5 * np.matmul(rot_matrix, self.lin_acc) * dt * dt
-
-
-
