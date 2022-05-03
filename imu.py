@@ -1,5 +1,4 @@
 import time
-
 import numpy as np
 
 
@@ -24,7 +23,7 @@ class IMU:
         self.orientation = np.array([0., 0., 0.])
         self.velocity = np.array([0., 0., 0.])
 
-        self.t0 = time.clock()
+        self.t0 = time.perf_counter()
 
     def get_position(self):
         return self.position
@@ -47,7 +46,7 @@ class IMU:
     def update(self, q, lin_acc, ang_vel):
         g = 10.1  # gravitational offset for the acceleration in z-direction
 
-        dt = time.clock() - self.t0
+        dt = time.perf_counter() - self.t0
 
         """ Update values from IMU"""
         self.q = q
