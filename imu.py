@@ -51,7 +51,7 @@ class IMU:
         """ Update values from IMU"""
         self.q = q
         self.angular_vel = ang_vel
-        self.lin_acc = lin_acc
+        self.lin_acc = lin_acc.copy
 
         """ Rotation matrix for q"""
         rot_matrix = np.array([
@@ -61,7 +61,13 @@ class IMU:
         ])
         rot_matrix = rot_matrix.reshape((3, 3))
 
+        """ Remove gravitational acceleration for position calculation"""
+        if np.abs(lin_acc[2] - g) < 0.1:
+            lin_acc[2] = g
+
+        lin_acc = lin_acc - g
+
         """ Calculate position and velocity in world frame"""
         self.orientation = q_to_euler(q)
-        self.velocity += np.matmul(rot_matrix, self.lin_acc) * dt
+        self.velocity += np.matmul(rot_matrix, lin_acc) * dt
         self.position += self.velocity * dt  # + 0.5 * np.matmul(rot_matrix, self.lin_acc) * dt * dt
