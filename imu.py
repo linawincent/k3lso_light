@@ -5,9 +5,9 @@ import numpy as np
 def q_to_euler(q):
     """ Returns the roll, pitch, yaw from the IMU quaternions """
     orientation = np.zeros(3)
-    orientation[0] = np.arctan(2 * (q[3] * q[0] + q[1] * q[2]) / (1 - 2 * (q[0]**2 * q[1]**2)))
+    orientation[0] = np.atan2(2 * (q[3] * q[0] + q[1] * q[2]), (1 - 2 * (q[0]**2 * q[1]**2)))
     orientation[1] = np.arcsin(2 * (q[3] * q[1] - q[0] * q[2]))
-    orientation[2] = np.arctan(2 * (q[3] * q[2] + q[0] * q[1]) / (1 - 2 * (q[1]**2 * q[2]**2)))
+    orientation[2] = np.atan2(2 * (q[3] * q[2] + q[0] * q[1]), (1 - 2 * (q[1]**2 * q[2]**2)))
     return orientation
 
 
